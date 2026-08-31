@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-ink-border;
+  }
+  body {
+    @apply bg-ink text-slate-100 font-sans;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+}

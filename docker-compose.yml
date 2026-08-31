@@ -1,0 +1,85 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: sih26188_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-sih_admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme_in_env}
+      POSTGRES_DB: ${POSTGRES_DB:-doc_forgery_db}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-sih_admin} -d ${POSTGRES_DB:-doc_forgery_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: sih26188_backend
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql+psycopg2://${POSTGRES_USER:-sih_admin}:${POSTGRES_PASSWORD:-changeme_in_env}@db:5432/${POSTGRES_DB:-doc_forgery_db}
+      ENV: ${ENV:-development}
+      MAX_UPLOAD_MB: ${MAX_UPLOAD_MB:-10}
+      # Trust score fusion weights (must sum to 1.0) - overridable without a rebuild
+      WEIGHT_OCR_CONFIDENCE: ${WEIGHT_OCR_CONFIDENCE:-0.25}
+      WEIGHT_ELA_TAMPER: ${WEIGHT_ELA_TAMPER:-0.40}
+      WEIGHT_FACE_MATCH: ${WEIGHT_FACE_MATCH:-0.35}
+      # Verdict thresholds on the fused 0-100 trust score
+      THRESHOLD_GENUINE: ${THRESHOLD_GENUINE:-75}
+      THRESHOLD_SUSPICIOUS: ${THRESHOLD_SUSPICIOUS:-45}
+      # ELA (Error Level Analysis) tunables - see app/services/ela_detector.py
+      ELA_JPEG_QUALITY: ${ELA_JPEG_QUALITY:-90}
+      ELA_SCORE_LOW_BOUND: ${ELA_SCORE_LOW_BOUND:-4.0}
+      ELA_SCORE_HIGH_BOUND: ${ELA_SCORE_HIGH_BOUND:-55.0}
+      ELA_COMPRESSION_WARNING_QUANT_MEAN_THRESHOLD: ${ELA_COMPRESSION_WARNING_QUANT_MEAN_THRESHOLD:-15.0}
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+      - upload_data:/app/app/static/uploads
+      - ela_data:/app/app/static/ela_outputs
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    healthcheck:
+      # No curl in the python:3.11-slim image - use urllib so we don't need
+      # to add a package just for the healthcheck.
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/v1/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: sih26188_frontend
+    restart: unless-stopped
+    environment:
+      # Vite proxy target — must be the backend's docker-compose service
+      # name, since the frontend's own "localhost" is this container, not
+      # the backend's. Leave VITE_API_BASE_URL unset so the browser keeps
+      # using relative /api/v1 calls, which the Vite dev server proxies.
+      PROXY_TARGET: http://backend:8000
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  pgdata:
+  upload_data:
+  ela_data:
