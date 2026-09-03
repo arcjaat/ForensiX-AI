@@ -100,6 +100,7 @@ function App() {
                 preprocessResult={preprocessResult}
                 processedPreviewUrl={processedPreviewUrl}
                 isPreprocessing={isPreprocessing}
+                isScreening={isScreening}
                 onReset={() => {
                   setPendingSelfie(null);
                   reset();
@@ -110,20 +111,20 @@ function App() {
             {idFile && (
               <motion.div
                 variants={itemVariants}
-                className="flex flex-col gap-3 rounded-lg border border-zinc-800 bg-zinc-950/60 p-3.5 backdrop-blur-md sm:flex-row sm:items-center"
+                className="flex flex-col gap-3 rounded-xl border border-zinc-800 bg-zinc-950/70 p-3.5 backdrop-blur-md sm:flex-row sm:items-center shadow-lg"
               >
                 <div className="flex-1">
                   <SelfieUpload selfieFile={pendingSelfie} onSelect={setPendingSelfie} />
                 </div>
                 <Button
                   type="button"
-                  size="default"
+                  variant="cyber-sm"
                   disabled={!pendingSelfie || isScreening}
                   onClick={() => idFile && runScreeningPipeline(idFile, pendingSelfie)}
-                  className="h-10 shrink-0 font-medium"
+                  className="h-10 shrink-0 shadow-[0_0_12px_rgba(6,182,212,0.3)]"
                 >
-                  <ScanFace className="h-4 w-4 mr-1.5" />
-                  Verify Face Match
+                  <ScanFace className="h-4 w-4 mr-2 text-cyan-400" />
+                  VERIFY FACE MATCH
                 </Button>
               </motion.div>
             )}
@@ -156,6 +157,8 @@ function App() {
                 <ExportReportButton
                   result={screeningResult}
                   fileName={idFile?.name ?? "specimen-id"}
+                  originalImageUrl={processedPreviewUrl ?? originalPreviewUrl}
+                  heatmapUrl={heatmapUrl}
                 />
               </motion.div>
             )}

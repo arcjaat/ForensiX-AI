@@ -27,14 +27,14 @@ export function MetadataPanel({ ocr }: MetadataPanelProps) {
 
   return (
     <Card className="border-ink-border bg-ink-card/95 backdrop-blur-md shadow-xl">
-      <CardHeader className="pb-3">
+      <CardHeader className="pb-3 border-b border-zinc-800/60">
         <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
-            <ScanText className="h-4 w-4 text-accent" />
-            Extracted Metadata (OCR)
+          <CardTitle className="flex items-center gap-2 font-tech text-xl tracking-wider text-white">
+            <ScanText className="h-5 w-5 text-cyan-400" />
+            EXTRACTED METADATA (OCR)
           </CardTitle>
-          <span className="flex items-center gap-1 font-mono text-[10px] text-emerald-400 border border-emerald-500/30 bg-emerald-950/40 rounded px-2 py-0.5">
-            <Lock className="h-2.5 w-2.5" />
+          <span className="flex items-center gap-1.5 font-mono text-[10px] text-emerald-400 border border-emerald-500/30 bg-emerald-950/40 rounded px-2.5 py-0.5 shadow-[0_0_8px_rgba(16,185,129,0.2)]">
+            <Lock className="h-3 w-3" />
             PII Redacted
           </span>
         </div>

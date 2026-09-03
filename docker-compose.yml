@@ -27,13 +27,12 @@ services:
       DATABASE_URL: postgresql+psycopg2://${POSTGRES_USER:-sih_admin}:${POSTGRES_PASSWORD:-changeme_in_env}@db:5432/${POSTGRES_DB:-doc_forgery_db}
       ENV: ${ENV:-development}
       MAX_UPLOAD_MB: ${MAX_UPLOAD_MB:-10}
-      # Trust score fusion weights (must sum to 1.0) - overridable without a rebuild
-      WEIGHT_OCR_CONFIDENCE: ${WEIGHT_OCR_CONFIDENCE:-0.25}
-      WEIGHT_ELA_TAMPER: ${WEIGHT_ELA_TAMPER:-0.40}
-      WEIGHT_FACE_MATCH: ${WEIGHT_FACE_MATCH:-0.35}
+      # Baseline calibration & non-linear risk fusion parameters
+      FACE_MATCH_THRESHOLD: ${FACE_MATCH_THRESHOLD:-0.60}
+      ELA_NOISE_BASELINE: ${ELA_NOISE_BASELINE:-0.25}
       # Verdict thresholds on the fused 0-100 trust score
-      THRESHOLD_GENUINE: ${THRESHOLD_GENUINE:-75}
-      THRESHOLD_SUSPICIOUS: ${THRESHOLD_SUSPICIOUS:-45}
+      THRESHOLD_GENUINE: ${THRESHOLD_GENUINE:-80}
+      THRESHOLD_SUSPICIOUS: ${THRESHOLD_SUSPICIOUS:-40}
       # ELA (Error Level Analysis) tunables - see app/services/ela_detector.py
       ELA_JPEG_QUALITY: ${ELA_JPEG_QUALITY:-90}
       ELA_SCORE_LOW_BOUND: ${ELA_SCORE_LOW_BOUND:-4.0}

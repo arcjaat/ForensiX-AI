@@ -24,17 +24,17 @@ export function ForensicImageViewer({ baseImageUrl, heatmapUrl, ela }: ForensicI
 
   if (!baseImageUrl) {
     return (
-      <Card className="border-ink-border bg-ink-card/95 backdrop-blur-md">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Crosshair className="h-4 w-4 text-accent" />
-            Forensic Image Forensics (ELA)
+      <Card className="border-ink-border bg-ink-card/95 backdrop-blur-md shadow-xl">
+        <CardHeader className="border-b border-zinc-800/60 pb-3">
+          <CardTitle className="flex items-center gap-2 font-tech text-xl tracking-wider text-white">
+            <Crosshair className="h-5 w-5 text-cyan-400" />
+            FORENSIC IMAGE FORENSICS (ELA)
           </CardTitle>
           <CardDescription>
             Error Level Analysis (JET colormap) heatmap overlay and anomaly brackets will appear here.
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-4">
           <div className="flex h-[320px] items-center justify-center rounded-xl border border-dashed border-zinc-800 bg-zinc-950/40 text-xs text-slate-500 font-mono">
             Awaiting Document Intake
           </div>
@@ -45,11 +45,11 @@ export function ForensicImageViewer({ baseImageUrl, heatmapUrl, ela }: ForensicI
 
   return (
     <Card className="border-ink-border bg-ink-card/95 backdrop-blur-md shadow-xl">
-      <CardHeader className="flex flex-row items-center justify-between gap-3 space-y-0 pb-3">
+      <CardHeader className="flex flex-row items-center justify-between gap-3 space-y-0 pb-3 border-b border-zinc-800/60">
         <div>
-          <CardTitle className="flex items-center gap-2">
-            <Crosshair className="h-4 w-4 text-accent" />
-            Forensic Heatmap &amp; Bounding Brackets
+          <CardTitle className="flex items-center gap-2 font-tech text-xl tracking-wider text-white">
+            <Crosshair className="h-5 w-5 text-cyan-400" />
+            FORENSIC HEATMAP &amp; BOUNDING BRACKETS
           </CardTitle>
           <CardDescription>
             Error Level Analysis (ELA) 90% JPEG re-compression difference map.

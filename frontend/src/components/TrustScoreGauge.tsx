@@ -123,14 +123,14 @@ export function TrustScoreGauge({ score, verdict }: TrustScoreGaugeProps) {
       </svg>
 
       {/* Numerical score readout */}
-      <div className="absolute top-[50px] flex flex-col items-center select-none">
+      <div className="absolute top-[44px] flex flex-col items-center select-none">
         <span
-          className={cn("font-mono text-4xl font-bold tabular-nums tracking-tight transition-colors duration-500")}
+          className={cn("font-tech text-5xl font-bold tabular-nums tracking-wider transition-colors duration-500 drop-shadow-[0_0_12px_rgba(255,255,255,0.2)]")}
           style={{ color }}
         >
           {animatedNumber}
         </span>
-        <span className="font-mono text-[10px] font-medium uppercase tracking-widest text-slate-400">
+        <span className="font-tech text-xs font-semibold uppercase tracking-widest text-slate-400">
           Trust Score
         </span>
       </div>

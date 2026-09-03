@@ -20,14 +20,13 @@ class Settings(BaseSettings):
     UPLOAD_DIR: str = "app/static/uploads"
     ELA_OUTPUT_DIR: str = "app/static/ela_outputs"
 
-    # Risk Fusion Engine weights — must sum to 1.0 (calculated in screen.py)
-    WEIGHT_OCR_CONFIDENCE: float = 0.25
-    WEIGHT_ELA_TAMPER: float = 0.40
-    WEIGHT_FACE_MATCH: float = 0.35
+    # Baseline Calibration & Non-Linear Risk Fusion Parameters
+    FACE_MATCH_THRESHOLD: float = 0.60
+    ELA_NOISE_BASELINE: float = 0.25
 
     # Verdict thresholds on the final 0-100 trust score
-    THRESHOLD_GENUINE: int = 75      # score >= this -> "Genuine"
-    THRESHOLD_SUSPICIOUS: int = 45   # score >= this (and < genuine) -> "Suspicious"; below -> "Fake"
+    THRESHOLD_GENUINE: int = 80      # score >= this -> "Genuine"
+    THRESHOLD_SUSPICIOUS: int = 40   # score >= this (and < genuine) -> "Suspicious"; below -> "Fake"
 
     # ELA (Error Level Analysis) tunables — see app/services/ela_detector.py
     # for what each one controls. Exposed here so they can be re-tuned against

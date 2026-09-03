@@ -12,31 +12,31 @@ export interface SignalBreakdownProps {
 export function SignalBreakdown({ result }: SignalBreakdownProps) {
   return (
     <Card className="border-ink-border bg-ink-card/95 backdrop-blur-md shadow-xl">
-      <CardHeader className="pb-3">
-        <CardTitle className="flex items-center gap-2">
-          <FlaskConical className="h-4 w-4 text-accent" />
-          Multi-Factor Signal Breakdown
+      <CardHeader className="pb-3 border-b border-zinc-800/60">
+        <CardTitle className="flex items-center gap-2 font-tech text-xl tracking-wider text-white">
+          <FlaskConical className="h-5 w-5 text-cyan-400" />
+          MULTI-FACTOR SIGNAL BREAKDOWN
         </CardTitle>
         <CardDescription>
-          Individual vision signal weights contributing to the fused Trust Score.
+          Multi-channel vision signals synthesized through calibrated non-linear risk fusion.
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-4 pt-4">
         <SignalRow
           icon={<ScanText className="h-4 w-4" />}
-          label="OCR Field Confidence (25%)"
+          label="OCR Field Confidence (Base Identity)"
           value={result ? result.ocr.mean_confidence : null}
           detail={result ? `${Object.keys(result.ocr.fields).length} field(s) extracted & verified` : undefined}
           delay={0.1}
         />
         <SignalRow
           icon={<FlaskConical className="h-4 w-4" />}
-          label="ELA Tamper Anomaly (40%)"
+          label="ELA Compression Anomaly (Multiplicative Tamper Penalty)"
           value={result ? result.ela.tamper_score : null}
           detail={
             result
               ? `${result.ela.suspicious_regions.length} anomaly region(s) flagged${
-                  result.ela.compression_warning ? " · compression warning" : ""
+                  result.ela.compression_warning ? " · compression noise baseline filtered" : ""
                 }`
               : undefined
           }
@@ -45,12 +45,12 @@ export function SignalBreakdown({ result }: SignalBreakdownProps) {
         />
         <SignalRow
           icon={<ScanFace className="h-4 w-4" />}
-          label="Siamese Face Match (35%)"
+          label="Siamese Biometric Match (Cosine Similarity)"
           value={result ? result.face_match.similarity_score : null}
           detail={
             result
               ? result.face_match.face_detected_on_id && result.face_match.face_detected_on_selfie
-                ? "Biometric face verified on both frames"
+                ? `Biometric match verified (${(result.face_match.similarity_score * 100).toFixed(1)}% cosine similarity)`
                 : "Awaiting live selfie capture"
               : undefined
           }
@@ -96,10 +96,10 @@ function SignalRow({
     >
       <div className="mb-2 flex items-center justify-between">
         <div className="flex items-center gap-2 text-xs font-medium text-slate-200">
-          <span className="text-slate-400">{icon}</span>
+          <span className="text-cyan-400">{icon}</span>
           {label}
         </div>
-        <span className="font-mono text-xs font-semibold tabular-nums text-slate-200">
+        <span className="font-tech text-base font-bold tabular-nums text-slate-100">
           {pct !== null ? `${pct}%` : "—"}
         </span>
       </div>

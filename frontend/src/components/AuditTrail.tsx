@@ -22,9 +22,9 @@ export function AuditTrail({ entries, onClear }: AuditTrailProps) {
     <Card className="border-ink-border bg-ink-card/95 backdrop-blur-md shadow-xl">
       <CardHeader className="flex flex-row items-center justify-between gap-3 space-y-0 pb-3">
         <div className="flex items-center gap-2.5">
-          <History className="h-4 w-4 text-accent" />
+          <History className="h-5 w-5 text-cyan-400" />
           <div>
-            <CardTitle>Session Audit Trail</CardTitle>
+            <CardTitle className="font-tech text-xl tracking-wider text-white">SESSION AUDIT TRAIL</CardTitle>
             <CardDescription>
               Chronological log of processed specimen documents in this active officer session.
             </CardDescription>

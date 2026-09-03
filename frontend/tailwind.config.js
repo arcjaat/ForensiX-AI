@@ -28,8 +28,14 @@ export default {
           "fake-dim": "#7f1d1d",
         },
       },
+      fontSize: {
+        base: "1.125rem",
+        lg: "1.25rem",
+        xl: "1.5rem",
+      },
       fontFamily: {
         sans: ["Inter", "sans-serif"],
+        tech: ["Rajdhani", "sans-serif"],
         mono: ["JetBrains Mono", "monospace"],
       },
       keyframes: {
@@ -37,14 +43,25 @@ export default {
           "0%": { transform: "translateY(-100%)" },
           "100%": { transform: "translateY(300%)" },
         },
+        "laser-vertical": {
+          "0%": { top: "0%" },
+          "50%": { top: "100%" },
+          "100%": { top: "0%" },
+        },
         "pulse-dot": {
           "0%, 100%": { opacity: "1" },
           "50%": { opacity: "0.4" },
         },
+        "cyber-grid": {
+          "0%, 100%": { opacity: "0.2" },
+          "50%": { opacity: "0.6" },
+        },
       },
       animation: {
         "scan-sweep": "scan-sweep 2s ease-in-out 1",
+        "laser-vertical": "laser-vertical 2.5s ease-in-out infinite",
         "pulse-dot": "pulse-dot 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+        "cyber-grid": "cyber-grid 3s ease-in-out infinite",
       },
     },
   },

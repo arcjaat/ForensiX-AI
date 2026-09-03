@@ -38,15 +38,15 @@ export function Header() {
       <div className="mx-auto flex h-16 max-w-[1440px] items-center justify-between px-4 sm:px-6">
         {/* Brand & Agency Header */}
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-cyan-500 text-white shadow-[0_0_20px_rgba(99,102,241,0.35)]">
-            <ShieldCheck className="h-5 w-5" strokeWidth={2.5} />
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-500 to-indigo-600 text-white shadow-[0_0_20px_rgba(6,182,212,0.45)]">
+            <ShieldCheck className="h-6 w-6" strokeWidth={2.5} />
           </div>
           <div className="flex flex-col leading-tight">
             <div className="flex items-center gap-2">
-              <span className="font-sans text-[15px] font-bold tracking-tight text-white">
+              <span className="font-tech text-2xl font-bold tracking-wider text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]">
                 ForensiX AI
               </span>
-              <span className="rounded bg-indigo-500/20 px-1.5 py-0.2 font-mono text-[9px] font-semibold text-indigo-300 border border-indigo-500/30 uppercase tracking-wider">
+              <span className="rounded bg-cyan-500/20 px-2 py-0.5 font-tech text-xs font-bold text-cyan-300 border border-cyan-500/40 uppercase tracking-widest shadow-[0_0_8px_rgba(6,182,212,0.3)]">
                 SIH26188
               </span>
             </div>
@@ -54,8 +54,8 @@ export function Header() {
               AI-Based Fake Identity &amp; Document Screening System
             </span>
           </div>
-          <span className="ml-3 hidden items-center gap-1 rounded-md border border-zinc-800 bg-zinc-900/90 px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest text-slate-300 md:inline-flex">
-            <Sparkles className="h-3 w-3 text-cyan-400" />
+          <span className="ml-3 hidden items-center gap-1.5 rounded-md border border-cyan-500/30 bg-cyan-950/30 px-3 py-1 font-tech text-xs font-semibold uppercase tracking-widest text-cyan-300 md:inline-flex shadow-[0_0_10px_rgba(6,182,212,0.15)]">
+            <Sparkles className="h-3.5 w-3.5 text-cyan-400" />
             MHA Agency Edition
           </span>
         </div>

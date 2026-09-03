@@ -83,24 +83,71 @@ async def _run_face_match(id_image_path: Path, selfie_path: Path | None) -> Face
     return FaceMatchResult(**result)
 
 
-def _fuse_scores(ocr: OCRResult, ela: ELAResult, face: FaceMatchResult) -> ScreeningVerdict:
-    """Calculates weighted 0-100 Trust Score and actionable verdict."""
-    w_ocr = settings.WEIGHT_OCR_CONFIDENCE
-    w_ela = settings.WEIGHT_ELA_TAMPER
-    w_face = settings.WEIGHT_FACE_MATCH
+def _calibrate_face_score(raw_score: float, threshold: float = 0.60) -> float:
+    """
+    Calibrate face match cosine similarity score.
+    Cosine similarity naturally hovers around 0.3-0.4 even for different faces.
+    - If raw_score < threshold (0.60): returns 0.0 (Definite Mismatch).
+    - If raw_score >= threshold (0.60): linearly scales [threshold, 1.0] -> [0.5, 1.0].
+    """
+    if raw_score < threshold:
+        return 0.0
+    if raw_score >= 1.0:
+        return 1.0
+    scaled = 0.5 + 0.5 * ((raw_score - threshold) / (1.0 - threshold))
+    return max(0.0, min(1.0, scaled))
 
-    # ELA tamper_score: higher = more tampering, so inverted for trust calculation
-    trust_components = (
-        w_ocr * ocr.mean_confidence
-        + w_ela * (1.0 - ela.tamper_score)
-        + w_face * face.similarity_score
-    )
-    trust_score = round(max(0.0, min(1.0, trust_components)) * 100)
+
+def _calibrate_ela_score(raw_score: float, baseline: float = 0.25) -> float:
+    """
+    Calibrate ELA tamper score to account for baseline JPEG compression noise.
+    - If raw_score <= baseline (0.25): returns 0.0 (treated as clean).
+    - If raw_score > baseline: linearly scales [baseline, 1.0] -> [0.0, 1.0].
+    """
+    if raw_score <= baseline:
+        return 0.0
+    if raw_score >= 1.0:
+        return 1.0
+    scaled = (raw_score - baseline) / (1.0 - baseline)
+    return max(0.0, min(1.0, scaled))
+
+
+def _fuse_scores(ocr: OCRResult, ela: ELAResult, face: FaceMatchResult) -> ScreeningVerdict:
+    """
+    Calculates non-linear, penalty-based 0-100 Trust Score and actionable verdict.
+
+    1. Calibrate Face Match & ELA Signals.
+    2. Base Identity Score:
+       - 50% OCR Confidence + 50% Calibrated Face Match (if selfie biometric match active)
+       - 100% OCR Confidence (if no selfie provided)
+    3. Tamper Penalty:
+       - Multiplicative penalty: Final Trust Score = Base Score * (1.0 - Calibrated ELA Penalty)
+    """
+    raw_face = face.similarity_score
+    calibrated_face = _calibrate_face_score(raw_face, settings.FACE_MATCH_THRESHOLD)
+
+    raw_ela = ela.tamper_score
+    calibrated_ela = _calibrate_ela_score(raw_ela, settings.ELA_NOISE_BASELINE)
+
+    # Base Identity Score
+    has_selfie_match = face.face_detected_on_id and face.face_detected_on_selfie
+    if has_selfie_match:
+        base_score = 0.50 * ocr.mean_confidence + 0.50 * calibrated_face
+    else:
+        base_score = ocr.mean_confidence
+
+    # Tamper Penalty (Multiplicative)
+    tamper_penalty = calibrated_ela
+    final_score_fraction = base_score * (1.0 - tamper_penalty)
+    trust_score = round(max(0.0, min(1.0, final_score_fraction)) * 100)
 
     explanation = [
-        f"OCR mean field confidence: {ocr.mean_confidence:.2f} (weight {w_ocr})",
-        f"ELA tamper score: {ela.tamper_score:.2f} — higher indicates likely splicing (weight {w_ela})",
-        f"Face match similarity: {face.similarity_score:.2f} (weight {w_face})",
+        f"OCR mean field confidence: {ocr.mean_confidence:.2f}",
+        f"Base identity score: {base_score:.2f}" + (
+            f" (50% OCR + 50% Face Match [raw {raw_face:.2f} -> calibrated {calibrated_face:.2f}])"
+            if has_selfie_match else " (100% OCR — no selfie biometric intake)"
+        ),
+        f"ELA tamper penalty: {calibrated_ela:.2f} (raw {raw_ela:.2f}, baseline {settings.ELA_NOISE_BASELINE:.2f})",
     ]
     if ela.compression_warning:
         explanation.append(f"⚠ {ela.forensic_notes}")
