@@ -81,10 +81,11 @@ export async function exportInspectionReport({
     hour12: true,
   });
 
-  // Load visual evidence images asynchronously
-  const [originalDataUri, heatmapDataUri] = await Promise.all([
+  // Load visual evidence images and brand logo asynchronously
+  const [originalDataUri, heatmapDataUri, logoDataUri] = await Promise.all([
     originalImageUrl ? fetchImageAsDataUri(originalImageUrl) : Promise.resolve(null),
     heatmapUrl ? fetchImageAsDataUri(heatmapUrl) : Promise.resolve(null),
+    fetchImageAsDataUri("/logo.png"),
   ]);
 
   let y = 0;
@@ -97,20 +98,39 @@ export async function exportInspectionReport({
   doc.setFillColor(6, 182, 212); // Cyan-500
   doc.rect(0, 72, pageWidth, 2.5, "F");
 
+  // Brand Logo (Right-aligned in header)
+  if (logoDataUri) {
+    try {
+      // Render brand logo in top right of the banner
+      doc.addImage(
+        logoDataUri,
+        "PNG",
+        pageWidth - marginX - 128,
+        14,
+        128,
+        46,
+        undefined,
+        "FAST",
+      );
+    } catch {
+      // Graceful degradation
+    }
+  }
+
   // Header Title
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(14);
+  doc.setFontSize(13);
   doc.setTextColor(255, 255, 255);
-  doc.text("FORENSIX AI — FORENSIC VERIFICATION AUDIT", marginX, 32);
+  doc.text("FORENSIX AI — FORENSIC VERIFICATION AUDIT", marginX, 30);
 
   doc.setFont("helvetica", "normal");
   doc.setFontSize(8.5);
   doc.setTextColor(6, 182, 212); // Cyan
-  doc.text("MINISTRY OF HOME AFFAIRS • SIH26188 AI SCREENING SYSTEM", marginX, 47);
+  doc.text("MINISTRY OF HOME AFFAIRS • SIH26188 AI SCREENING SYSTEM", marginX, 45);
 
   doc.setFontSize(8);
   doc.setTextColor(161, 161, 170); // Zinc-400
-  doc.text(`AUDIT ID: ${appId}   |   OFFICER: ${officerId}   |   TIME: ${timestamp}`, marginX, 61);
+  doc.text(`AUDIT ID: ${appId}   |   OFFICER: ${officerId}   |   TIME: ${timestamp}`, marginX, 59);
 
   y = 90;
 
